@@ -28,15 +28,9 @@ spec:
           ports:
             - containerPort: 3000
 
-          env:
-            - name: NAMESPACE
-              value: production-lab
-
-            - name: VERSION
-              value: "1.0.0"
-
-            - name: ENVIRONMENT
-              value: Production
+          envFrom:
+            - configMapRef:
+                name: hello-app-config
 
           resources:
             requests:
