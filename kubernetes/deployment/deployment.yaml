@@ -20,6 +20,7 @@ spec:
         app: hello-app
 
     spec:
+      serviceAccountName: hello-app-sa
       containers:
         - name: hello-app
           image: charithkalhara/hello-kubernetes:latest
