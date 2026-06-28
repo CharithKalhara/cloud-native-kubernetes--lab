@@ -28,6 +28,10 @@ spec:
           ports:
             - containerPort: 3000
 
+          volumeMounts:
+            - name: app-storage
+              mountPath: /app/data
+
           envFrom:
             - configMapRef:
                 name: hello-app-config
