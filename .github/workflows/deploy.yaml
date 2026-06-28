@@ -71,6 +71,10 @@ jobs:
 
             docker pull ${{ env.IMAGE }}:latest
 
+            kubectl apply -f kubernetes/namespace/
+
+            sleep 5
+
             kubectl apply -R -f kubernetes/
 
             kubectl rollout restart deployment/hello-app -n production-lab
