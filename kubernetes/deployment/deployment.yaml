@@ -60,3 +60,8 @@ spec:
               port: 3000
             initialDelaySeconds: 5
             periodSeconds: 10
+
+      volumes:
+        - name: app-storage
+          persistentVolumeClaim:
+            claimName: hello-app-pvc
