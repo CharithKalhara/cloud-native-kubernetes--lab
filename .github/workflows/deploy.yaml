@@ -58,10 +58,18 @@ jobs:
           ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << EOF
             set -e
 
-            cd ~/cloud-native-kubernetes--lab
+            cd ~
+
+            if [ ! -d "cloud-native-kubernetes--lab" ]; then
+              git clone https://github.com/CharithKalhara/cloud-native-kubernetes--lab.git
+            fi
+
+            cd cloud-native-kubernetes--lab
 
             git fetch origin
             git reset --hard origin/main
+
+            docker pull ${{ env.IMAGE }}:latest
 
             kubectl apply -f kubernetes/
 
