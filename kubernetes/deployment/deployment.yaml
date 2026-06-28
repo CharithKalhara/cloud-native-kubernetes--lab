@@ -31,6 +31,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: hello-app-config
+            - secretRef:
+                name: hello-app-secret
 
           resources:
             requests:
