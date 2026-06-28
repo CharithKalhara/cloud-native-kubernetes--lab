@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: hello-app
-          image: YOUR_DOCKERHUB_USERNAME/hello-kubernetes:latest
+          image: charithkalhara/hello-kubernetes:latest
           imagePullPolicy: Always
 
           ports:
