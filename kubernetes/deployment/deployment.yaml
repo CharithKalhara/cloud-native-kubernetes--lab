@@ -22,8 +22,8 @@ spec:
     spec:
       containers:
         - name: hello-app
-          image: hello-kubernetes:1.0
-          imagePullPolicy: Never
+          image: YOUR_DOCKERHUB_USERNAME/hello-kubernetes:latest
+          imagePullPolicy: Always
 
           ports:
             - containerPort: 3000
