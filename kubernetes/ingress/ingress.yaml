@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+
+metadata:
+  name: hello-app-ingress
+  namespace: production-lab
+
+spec:
+  ingressClassName: traefik
+
+  rules:
+    - host: kubernetes.charithkalhara.me
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: hello-service
+                port:
+                  number: 80
