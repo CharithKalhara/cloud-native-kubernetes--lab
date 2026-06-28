@@ -1,0 +1,16 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: hello-app-cert
+  namespace: production-lab
+
+spec:
+  secretName: hello-app-tls
+
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+
+  dnsNames:
+    - kubernetes.charithkalhara.me

@@ -6,7 +6,10 @@ metadata:
   namespace: production-lab
 
 spec:
-  ingressClassName: traefik
+  tls:
+    - hosts:
+        - kubernetes.charithkalhara.me
+      secretName: hello-app-tls
 
   rules:
     - host: kubernetes.charithkalhara.me
