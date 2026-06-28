@@ -1,21 +1,21 @@
+# Node.js
+app/node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+
 # macOS
 .DS_Store
 
-# Linux
-*~
+# Windows
+Thumbs.db
 
 # VS Code
 .vscode/
 
 # JetBrains
 .idea/
-
-# Logs
-*.log
-
-# Python
-__pycache__/
-*.pyc
-
-# Kubernetes
-*.swp
