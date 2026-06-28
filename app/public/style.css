@@ -1,0 +1,27 @@
+body{
+    background:#f5f7fa;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+.card{
+    width:700px;
+    margin:50px auto;
+    background:white;
+    padding:30px;
+    border-radius:10px;
+    box-shadow:0 4px 10px rgba(0,0,0,.15);
+}
+
+h1{
+    color:#2563eb;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+td{
+    padding:12px;
+    border-bottom:1px solid #ddd;
+}
