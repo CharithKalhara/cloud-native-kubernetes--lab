@@ -1,101 +1,32 @@
-name: Deploy to AWS K3s
+name: Build Docker Image
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
-
-permissions:
-  contents: read
-
-env:
-  IMAGE_NAME: hello-kubernetes
-  IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/hello-kubernetes
+    paths:
+      - 'app/**'
+      - 'kubernetes/**'
 
 jobs:
-  deploy:
-    name: Build, Push and Deploy
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v3
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
+      - uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and Push Docker Image
-        uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@v6
         with:
           context: ./app
           file: ./app/Dockerfile
           push: true
           tags: |
-            ${{ env.IMAGE }}:latest
-            ${{ env.IMAGE }}:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Configure SSH
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.AWS_SSH_KEY }}
-
-      - name: Add EC2 to known_hosts
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-
-      - name: Deploy to AWS
-        run: |
-          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << EOF
-            set -e
-
-            cd ~
-
-            if [ ! -d "cloud-native-kubernetes--lab" ]; then
-              git clone https://github.com/CharithKalhara/cloud-native-kubernetes--lab.git
-            fi
-
-            cd cloud-native-kubernetes--lab
-
-            git fetch origin
-            git reset --hard origin/main
-
-            docker pull ${{ env.IMAGE }}:latest
-
-            kubectl apply -f kubernetes/namespace/
-
-            sleep 5
-
-            kubectl apply -R -f kubernetes/
-
-            kubectl rollout restart deployment/hello-app -n production-lab
-
-            kubectl rollout status deployment/hello-app -n production-lab --timeout=180s
-
-            echo ""
-            echo "Pods"
-            kubectl get pods -n production-lab
-
-            echo ""
-            echo "Services"
-            kubectl get svc -n production-lab
-
-            echo ""
-            echo "Deployments"
-            kubectl get deployment -n production-lab
-          EOF
-
-      - name: Deployment Summary
-        run: |
-          echo "Deployment completed successfully."
-          echo "Image: ${{ env.IMAGE }}:latest"
-          echo "Commit: ${{ github.sha }}"
+            ${{ secrets.DOCKERHUB_USERNAME }}/hello-kubernetes:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/hello-kubernetes:${{ github.sha }}
