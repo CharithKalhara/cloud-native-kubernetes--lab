@@ -10,7 +10,7 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_vpc" "main" {
-  cidr_block           = "10.0.0.0/16"
+  cidr_block = "10.0.0.0/16"
 
   enable_dns_support   = true
   enable_dns_hostnames = true
@@ -52,14 +52,14 @@ resource "aws_route_table" "public" {
 
 resource "aws_route_table_association" "public" {
 
-  subnet_id      = aws_subnet.public.id
+  subnet_id = aws_subnet.public.id
 
   route_table_id = aws_route_table.public.id
 }
 
 resource "aws_security_group" "web" {
 
-  name   = "web-security"
+  name = "web-security"
 
   vpc_id = aws_vpc.main.id
 
@@ -107,17 +107,17 @@ resource "aws_instance" "kubernetes" {
   user_data = file("${path.module}/scripts/setup.sh")
 
   root_block_device {
-  volume_size = 16
-  volume_type = "gp3"
-  encrypted   = true
+    volume_size = 16
+    volume_type = "gp3"
+    encrypted   = true
 
-  tags = {
-    Name        = "kubernetes-root-volume"
-    Project     = "Cloud Native Kubernetes Lab"
-    Environment = "Development"
-    ManagedBy   = "Terraform"
+    tags = {
+      Name        = "kubernetes-root-volume"
+      Project     = "Cloud Native Kubernetes Lab"
+      Environment = "Development"
+      ManagedBy   = "Terraform"
+    }
   }
-}
 
   metadata_options {
     http_endpoint = "enabled"
