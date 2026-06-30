@@ -1,4 +1,4 @@
-name: Deploy Application
+name: Deploy to Kubernetes
 
 on:
   push:
@@ -22,9 +22,10 @@ jobs:
       - name: Build Docker Image
         run: |
           docker build \
+            -f app/Dockerfile \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/hello-kubernetes:${{ github.sha }} \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/hello-kubernetes:latest \
-            .
+            app
 
       - name: Push Docker Images
         run: |
