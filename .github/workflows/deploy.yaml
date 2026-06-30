@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'app/**'
+      - 'kubernetes/**'
+      - 'ansible/deploy.yml'
+      - 'ansible/roles/deploy/**'
+      - '.github/workflows/deploy.yml'
 
 jobs:
   deploy:
