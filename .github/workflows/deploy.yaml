@@ -44,12 +44,18 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
+      - name: Create Ansible Inventory
+        run: |
+          cat > ansible/inventory.ini <<EOF
+          [servers]
+          ${{ secrets.SERVER_IP }} ansible_user=${{ secrets.SERVER_USER }}
+          EOF
+
       - name: Run Ansible Deploy Playbook
         env:
           ANSIBLE_HOST_KEY_CHECKING: "False"
         run: |
           ansible-playbook \
-            -i "${{ secrets.SERVER_IP }}," \
+            -i ansible/inventory.ini \
             ansible/deploy.yml \
-            -u ${{ secrets.SERVER_USER }} \
             --private-key ~/.ssh/id_rsa
