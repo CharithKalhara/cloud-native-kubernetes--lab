@@ -1,4 +1,4 @@
-name: Deploy to Kubernetes
+name: Deploy Application
 
 on:
   push:
@@ -32,15 +32,24 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/hello-kubernetes:${{ github.sha }}
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/hello-kubernetes:latest
 
-      - name: Deploy with Ansible
-        uses: appleboy/ssh-action@v1.2.2
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            set -e
+      - name: Install Ansible
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible
 
-            cd ~/cloud-native-kubernetes--lab/ansible
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
-            ansible-playbook playbook.yml
+      - name: Run Ansible Deploy Playbook
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: "False"
+        run: |
+          ansible-playbook \
+            -i "${{ secrets.SERVER_IP }}," \
+            ansible/deploy.yml \
+            -u ${{ secrets.SERVER_USER }} \
+            --private-key ~/.ssh/id_rsa
