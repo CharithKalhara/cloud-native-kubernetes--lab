@@ -23,9 +23,11 @@ jobs:
       TF_VAR_ssh_public_key: ${{ secrets.SSH_PUBLIC_KEY }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - uses: hashicorp/setup-terraform@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.12.2
 
@@ -49,3 +51,43 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
+
+      - name: Get EC2 Public IP
+        id: terraform_output
+        run: |
+          echo "SERVER_IP=$(terraform output -raw public_ip)" >> $GITHUB_ENV
+
+      - name: Wait for SSH
+        run: |
+          until nc -z $SERVER_IP 22; do
+            echo "Waiting for SSH..."
+            sleep 10
+          done
+
+      - name: Install Ansible
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
+
+      - name: Create Ansible Inventory
+        run: |
+          cat > ansible/inventory.ini <<EOF
+          [servers]
+          $SERVER_IP ansible_user=${{ secrets.SERVER_USER }}
+          EOF
+
+      - name: Run Bootstrap Playbook
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: "False"
+        run: |
+          ansible-playbook \
+            -i ansible/inventory.ini \
+            ansible/bootstrap.yml \
+            --private-key ~/.ssh/id_rsa
