@@ -6,9 +6,37 @@
     version: main
     force: yes
 
-- name: Apply Kubernetes manifests
+- name: Create namespace
   shell: |
-    kubectl apply -R -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/
+    kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/namespace/
+
+- name: Apply ConfigMaps
+  shell: |
+    kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/configmap/
+
+- name: Apply Secrets
+  shell: |
+    kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/secret/
+
+- name: Apply Storage
+  shell: |
+    kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/storage/
+
+- name: Apply Deployments
+  shell: |
+    kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/deployment/
+
+- name: Apply Services
+  shell: |
+    kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/service/
+
+- name: Apply HPA
+  shell: |
+    kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/hpa/
+
+- name: Apply Ingress
+  shell: |
+    kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/ingress/
 
 - name: Restart application
   shell: |
