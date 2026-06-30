@@ -1,0 +1,8 @@
+---
+- name: Ensure deploy user exists
+  user:
+    name: deploy
+    shell: /bin/bash
+    groups: sudo,docker
+    append: yes
+    create_home: yes

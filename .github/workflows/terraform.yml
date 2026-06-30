@@ -19,25 +19,33 @@ jobs:
       run:
         working-directory: terraform/aws
 
+    env:
+      TF_VAR_ssh_public_key: ${{ secrets.SSH_PUBLIC_KEY }}
+
     steps:
       - uses: actions/checkout@v4
 
       - uses: hashicorp/setup-terraform@v3
         with:
-            terraform_version: 1.12.2
+          terraform_version: 1.12.2
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-            role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-            aws-region: ap-southeast-1
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ap-southeast-1
 
-      - run: terraform init
+      - name: Terraform Init
+        run: terraform init
 
-      - run: terraform fmt -check
+      - name: Terraform Format Check
+        run: terraform fmt -check
 
-      - run: terraform validate
+      - name: Terraform Validate
+        run: terraform validate
 
-      - run: terraform plan
+      - name: Terraform Plan
+        run: terraform plan
 
-      - run: terraform apply -auto-approve
+      - name: Terraform Apply
+        run: terraform apply -auto-approve

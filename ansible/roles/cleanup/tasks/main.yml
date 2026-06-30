@@ -1,0 +1,17 @@
+---
+- name: Remove unused Docker images
+  shell: docker image prune -af
+  ignore_errors: yes
+
+- name: Remove unused Docker volumes
+  shell: docker volume prune -f
+  ignore_errors: yes
+
+- name: Remove unused Docker networks
+  shell: docker network prune -f
+  ignore_errors: yes
+
+- name: Remove apt cache
+  apt:
+    autoclean: yes
+    autoremove: yes

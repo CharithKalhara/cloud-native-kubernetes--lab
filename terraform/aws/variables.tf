@@ -3,9 +3,11 @@ variable "region" {
 }
 
 variable "instance_type" {
-  default = "t3.medium"
+  default = "t3.small"
 }
 
-variable "key_name" {
-  default = "devops-key"
+variable "ssh_public_key" {
+  description = "Public SSH key for EC2 access"
+  type        = string
+  sensitive   = true
 }

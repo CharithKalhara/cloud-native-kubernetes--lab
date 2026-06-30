@@ -1,0 +1,13 @@
+---
+- hosts: servers
+  become: yes
+
+  roles:
+    - common
+    - security
+    - docker
+    - kubectl
+    - helm
+    - k3s
+    - monitoring
+    - cleanup

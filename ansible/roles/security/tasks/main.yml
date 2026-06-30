@@ -1,0 +1,33 @@
+---
+- name: Install security packages
+  apt:
+    name:
+      - ufw
+      - fail2ban
+    state: present
+    update_cache: yes
+
+- name: Allow SSH
+  community.general.ufw:
+    rule: allow
+    port: "22"
+
+- name: Allow HTTP
+  community.general.ufw:
+    rule: allow
+    port: "80"
+
+- name: Allow HTTPS
+  community.general.ufw:
+    rule: allow
+    port: "443"
+
+- name: Enable firewall
+  community.general.ufw:
+    state: enabled
+
+- name: Enable Fail2Ban
+  service:
+    name: fail2ban
+    enabled: yes
+    state: started

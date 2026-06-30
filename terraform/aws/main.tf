@@ -100,6 +100,8 @@ resource "aws_instance" "kubernetes" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
 
+  key_name = aws_key_pair.github_actions.key_name
+
   subnet_id = aws_subnet.public.id
 
   vpc_security_group_ids = [
@@ -132,6 +134,18 @@ resource "aws_instance" "kubernetes" {
 
   tags = {
     Name        = "kubernetes-node"
+    Project     = "Cloud Native Kubernetes Lab"
+    Environment = "Development"
+    ManagedBy   = "Terraform"
+  }
+}
+
+resource "aws_key_pair" "github_actions" {
+  key_name   = "github-actions-key"
+  public_key = var.ssh_public_key
+
+  tags = {
+    Name        = "github-actions-key"
     Project     = "Cloud Native Kubernetes Lab"
     Environment = "Development"
     ManagedBy   = "Terraform"
