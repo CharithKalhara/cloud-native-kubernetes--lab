@@ -1,0 +1,4 @@
+---
+- name: Create logging namespace
+  shell: |
+    kubectl create namespace logging --dry-run=client -o yaml | kubectl apply -f -

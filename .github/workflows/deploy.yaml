@@ -1,32 +1,62 @@
-name: Build Docker Image
+name: Deploy Application
 
 on:
   push:
     branches:
       - main
-    paths:
-      - 'app/**'
-      - 'kubernetes/**'
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - uses: docker/setup-buildx-action@v3
-
-      - uses: docker/login-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - uses: docker/build-push-action@v6
+      - name: Build Docker Image
+        run: |
+          docker build \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/hello-kubernetes:${{ github.sha }} \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/hello-kubernetes:latest \
+            .
+
+      - name: Push Docker Images
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/hello-kubernetes:${{ github.sha }}
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/hello-kubernetes:latest
+
+      - name: Deploy to Kubernetes
+        uses: appleboy/ssh-action@v1.2.2
         with:
-          context: ./app
-          file: ./app/Dockerfile
-          push: true
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/hello-kubernetes:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/hello-kubernetes:${{ github.sha }}
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+
+            cd ~/cloud-native-kubernetes-lab
+
+            git pull origin main
+
+            kubectl apply -f kubernetes/
+
+            kubectl rollout restart deployment hello-app -n production-lab
+
+            kubectl rollout status deployment hello-app \
+              -n production-lab \
+              --timeout=300s
+
+            echo "Pods"
+            kubectl get pods -n production-lab
+
+            echo "Services"
+            kubectl get svc -n production-lab
+
+            echo "Ingress"
+            kubectl get ingress -n production-lab
