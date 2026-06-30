@@ -8,8 +8,36 @@
     creates: /usr/local/bin/k3s
 
 - name: Wait for K3s
-  shell: kubectl get nodes
+  command: kubectl get nodes
   register: result
   retries: 10
   delay: 10
   until: result.rc == 0
+
+- name: Set kubeconfig permissions
+  file:
+    path: /etc/rancher/k3s/k3s.yaml
+    mode: "0644"
+
+- name: Create .kube directory
+  file:
+    path: /home/ubuntu/.kube
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: "0755"
+
+- name: Copy kubeconfig to ubuntu user
+  copy:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: /home/ubuntu/.kube/config
+    remote_src: true
+    owner: ubuntu
+    group: ubuntu
+    mode: "0600"
+
+- name: Update kubeconfig server address
+  replace:
+    path: /home/ubuntu/.kube/config
+    regexp: '127\.0\.0\.1'
+    replace: "{{ ansible_default_ipv4.address }}"
