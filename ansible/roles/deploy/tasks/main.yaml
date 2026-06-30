@@ -1,0 +1,28 @@
+---
+- name: Update repository
+  git:
+    repo: https://github.com/CharithKalhara/cloud-native-kubernetes--lab.git
+    dest: /home/{{ ansible_user }}/cloud-native-kubernetes--lab
+    version: main
+    force: yes
+
+- name: Apply Kubernetes manifests
+  shell: |
+    kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/
+
+- name: Restart application
+  shell: |
+    kubectl rollout restart deployment hello-app -n production-lab
+
+- name: Wait for rollout
+  shell: |
+    kubectl rollout status deployment hello-app -n production-lab --timeout=300s
+
+- name: Show pods
+  shell: kubectl get pods -n production-lab
+
+- name: Show services
+  shell: kubectl get svc -n production-lab
+
+- name: Show ingress
+  shell: kubectl get ingress -n production-lab

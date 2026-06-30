@@ -32,7 +32,7 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/hello-kubernetes:${{ github.sha }}
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/hello-kubernetes:latest
 
-      - name: Deploy to Kubernetes
+      - name: Deploy with Ansible
         uses: appleboy/ssh-action@v1.2.2
         with:
           host: ${{ secrets.SERVER_IP }}
@@ -41,23 +41,6 @@ jobs:
           script: |
             set -e
 
-            cd ~/cloud-native-kubernetes-lab
+            cd ~/cloud-native-kubernetes--lab/ansible
 
-            git pull origin main
-
-            kubectl apply -f kubernetes/
-
-            kubectl rollout restart deployment hello-app -n production-lab
-
-            kubectl rollout status deployment hello-app \
-              -n production-lab \
-              --timeout=300s
-
-            echo "Pods"
-            kubectl get pods -n production-lab
-
-            echo "Services"
-            kubectl get svc -n production-lab
-
-            echo "Ingress"
-            kubectl get ingress -n production-lab
+            ansible-playbook playbook.yml
