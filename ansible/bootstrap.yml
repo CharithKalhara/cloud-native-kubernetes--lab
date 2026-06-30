@@ -13,4 +13,3 @@
     - ingress
     - cert-manager
     - monitoring
-    - deploy
