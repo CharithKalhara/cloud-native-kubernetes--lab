@@ -16,6 +16,10 @@
 - name: Apply Secrets
   command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/secret/
 
+# ADD THIS
+- name: Apply RBAC
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/rbac/
+
 - name: Apply Storage
   command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/storage/
 
@@ -46,7 +50,7 @@
 - debug:
     var: pods.stdout_lines
 
-- name: Show Deployment
+- name: Describe Deployment
   command: kubectl describe deployment hello-app -n production-lab
   register: deployment
 
