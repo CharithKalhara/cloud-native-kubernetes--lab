@@ -4,53 +4,69 @@
     repo: https://github.com/CharithKalhara/cloud-native-kubernetes--lab.git
     dest: /home/{{ ansible_user }}/cloud-native-kubernetes--lab
     version: main
+    update: yes
     force: yes
 
 - name: Create namespace
-  shell: |
-    kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/namespace/
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/namespace/
 
 - name: Apply ConfigMaps
-  shell: |
-    kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/configmap/
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/configmap/
 
 - name: Apply Secrets
-  shell: |
-    kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/secret/
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/secret/
 
 - name: Apply Storage
-  shell: |
-    kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/storage/
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/storage/
 
 - name: Apply Deployments
-  shell: |
-    kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/deployment/
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/deployment/
 
 - name: Apply Services
-  shell: |
-    kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/service/
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/service/
 
 - name: Apply HPA
-  shell: |
-    kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/hpa/
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/hpa/
 
 - name: Apply Ingress
-  shell: |
-    kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/ingress/
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/ingress/
 
-- name: Restart application
-  shell: |
-    kubectl rollout restart deployment hello-app -n production-lab
+- name: Restart deployment
+  command: kubectl rollout restart deployment hello-app -n production-lab
 
 - name: Wait for rollout
-  shell: |
-    kubectl rollout status deployment hello-app -n production-lab --timeout=300s
+  command: kubectl rollout status deployment hello-app -n production-lab --timeout=300s
+  register: rollout
+  ignore_errors: true
 
-- name: Show pods
-  shell: kubectl get pods -n production-lab
+- name: Show Pods
+  command: kubectl get pods -n production-lab -o wide
+  register: pods
 
-- name: Show services
-  shell: kubectl get svc -n production-lab
+- debug:
+    var: pods.stdout_lines
 
-- name: Show ingress
-  shell: kubectl get ingress -n production-lab
+- name: Show Deployment
+  command: kubectl describe deployment hello-app -n production-lab
+  register: deployment
+
+- debug:
+    var: deployment.stdout_lines
+
+- name: Show Recent Events
+  command: kubectl get events -n production-lab --sort-by=.metadata.creationTimestamp
+  register: events
+
+- debug:
+    var: events.stdout_lines
+
+- name: Show Services
+  command: kubectl get svc -n production-lab
+
+- name: Show Ingress
+  command: kubectl get ingress -n production-lab
+
+- name: Fail if rollout failed
+  fail:
+    msg: "Deployment rollout failed."
+  when: rollout.rc != 0
