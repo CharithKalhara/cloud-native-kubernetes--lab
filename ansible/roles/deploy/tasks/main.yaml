@@ -8,7 +8,7 @@
 
 - name: Apply Kubernetes manifests
   shell: |
-    kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/
+    kubectl apply -R -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/
 
 - name: Restart application
   shell: |
