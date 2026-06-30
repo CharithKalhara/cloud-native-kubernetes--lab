@@ -1,6 +1,6 @@
 ---
 - hosts: servers
-  become: yes
+  become: true
 
   roles:
     - common
@@ -9,5 +9,7 @@
     - kubectl
     - helm
     - k3s
+    - metrics-server
+    - ingress
+    - cert-manager
     - monitoring
-    - cleanup

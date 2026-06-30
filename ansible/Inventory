@@ -1,2 +1,0 @@
-[servers]
-master ansible_host=YOUR_PUBLIC_IP ansible_user=ubuntu
