@@ -1,68 +1,122 @@
-apiVersion: apps/v1
-kind: Deployment
+---
+- name: Update repository
+  git:
+    repo: https://github.com/CharithKalhara/cloud-native-kubernetes--lab.git
+    dest: /home/{{ ansible_user }}/cloud-native-kubernetes--lab
+    version: main
+    update: yes
+    force: yes
 
-metadata:
-  name: hello-app
-  namespace: production-lab
-  labels:
-    app: hello-app
+- name: Create namespace
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/namespace/
 
-spec:
-  replicas: 1
+- name: Apply ConfigMaps
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/configmap/
 
-  selector:
-    matchLabels:
-      app: hello-app
+- name: Apply Secrets
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/secret/
 
-  template:
-    metadata:
-      labels:
-        app: hello-app
+- name: Apply RBAC
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/rbac/
 
-    spec:
-      serviceAccountName: hello-app-sa
-      containers:
-        - name: hello-app
-          image: charithkalhara/hello-kubernetes:latest
-          imagePullPolicy: Always
+- name: Apply Storage
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/storage/
 
-          ports:
-            - containerPort: 3000
+- name: Apply ClusterIssuer
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/certificate/clusterissuer.yaml
 
-          volumeMounts:
-            - name: app-storage
-              mountPath: /app/data
+- name: Apply Certificate
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/certificate/certificate.yaml
 
-          envFrom:
-            - configMapRef:
-                name: hello-app-config
-            - secretRef:
-                name: hello-app-secret
+- name: Apply Deployments
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/deployment/
 
-          resources:
-            requests:
-              cpu: "100m"
-              memory: "128Mi"
+- name: Apply ReplicaSets
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/replicaset/
+  ignore_errors: true
 
-            limits:
-              cpu: "250m"
-              memory: "256Mi"
+- name: Apply StatefulSets
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/statefulset/
+  ignore_errors: true
 
-          livenessProbe:
-            httpGet:
-              path: /api/info
-              port: 3000
-            initialDelaySeconds: 10
-            periodSeconds: 15
+- name: Apply Pods
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/pod/
+  ignore_errors: true
 
-          readinessProbe:
-            httpGet:
-              path: /api/info
-              port: 3000
-            initialDelaySeconds: 5
-            periodSeconds: 10
+- name: Apply Jobs
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/job/
+  ignore_errors: true
 
-      volumes:
-        - name: app-storage
-          persistentVolumeClaim:
-            claimName: hello-app-pvc
+- name: Apply CronJobs
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/cronjob/
+  ignore_errors: true
+
+- name: Apply Services
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/service/
+
+- name: Apply HPA
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/hpa/
+
+- name: Apply Monitoring
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/monitoring/
+  ignore_errors: true
+
+- name: Apply Ingress
+  command: kubectl apply -f /home/{{ ansible_user }}/cloud-native-kubernetes--lab/kubernetes/ingress/
+
+- name: Restart deployment
+  command: kubectl rollout restart deployment hello-app -n production-lab
+
+- name: Wait for rollout
+  command: kubectl rollout status deployment hello-app -n production-lab --timeout=300s
+  register: rollout
+  ignore_errors: true
+
+- name: Show Pods
+  command: kubectl get pods -n production-lab -o wide
+  register: pods
+
+- debug:
+    var: pods.stdout_lines
+
+- name: Show Certificates
+  command: kubectl get certificate -n production-lab
+  register: certificates
+  ignore_errors: true
+
+- debug:
+    var: certificates.stdout_lines
+
+- name: Show ClusterIssuer
+  command: kubectl get clusterissuer
+  register: clusterissuer
+  ignore_errors: true
+
+- debug:
+    var: clusterissuer.stdout_lines
+
+- name: Show TLS Secret
+  command: kubectl get secret hello-app-tls -n production-lab
+  register: tlssecret
+  ignore_errors: true
+
+- debug:
+    var: tlssecret.stdout_lines
+
+- name: Show Services
+  command: kubectl get svc -n production-lab
+
+- name: Show Ingress
+  command: kubectl get ingress -n production-lab
+
+- name: Show Recent Events
+  command: kubectl get events -n production-lab --sort-by=.metadata.creationTimestamp
+  register: events
+
+- debug:
+    var: events.stdout_lines
+
+- name: Fail if rollout failed
+  fail:
+    msg: "Deployment rollout failed."
+  when: rollout.rc != 0
