@@ -670,4 +670,4 @@ https://www.linkedin.com/in/charithkalhara/
 
 # License
 
-This project is licensed under the MIT License.
+MIT License.
