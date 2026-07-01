@@ -54,7 +54,7 @@ kubernetes.charithkalhara.me
 - Route53 DNS configuration
 - Automatic K3s installation
 - Kubernetes application deployment
-- GitHub Actions CI/CD pipeline
+- GitHub Actions CI/CD 
 - Docker image build and push
 - NGINX Ingress Controller
 - Automatic HTTPS using Let's Encrypt
@@ -249,9 +249,9 @@ This project deploys the following Kubernetes resources:
 
 ---
 
-# CI/CD Pipeline
+# CI/CD 
 
-The CI/CD pipeline performs the following tasks automatically:
+CI/CD performs the following tasks automatically:
 
 - Checkout source code
 - Build Docker image
