@@ -641,8 +641,6 @@ This project demonstrates practical experience with:
 - Helm charts
 - Argo CD GitOps
 - AWS Load Balancer Controller
-- External Secrets Operator
-- HashiCorp Vault integration
 - Kubernetes Dashboard
 
 ---
