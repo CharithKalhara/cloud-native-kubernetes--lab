@@ -449,10 +449,6 @@ Possible dashboards include:
 
 ---
 
-![CPU Stress Test](docs/images/cpu1.png)
-
----
-
 ![Application](docs/images/hello-kubernetes.png)
 
 ---
