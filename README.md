@@ -588,23 +588,7 @@ kubectl logs deployment/hello-app
 
 ---
 
-# Screenshots
 
-Include screenshots such as:
-
-- GitHub Actions pipeline
-- Terraform apply
-- AWS EC2 instance
-- K3s installation
-- kubectl get nodes
-- kubectl get pods
-- kubectl get ingress
-- Docker Hub image
-- Route53 record
-- SSL certificate
-- Browser showing deployed application
-
----
 
 # Learning Outcomes
 
