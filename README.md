@@ -1,4 +1,4 @@
-# ☸️ Cloud Native Kubernetes Lab
+# Cloud Native Kubernetes Lab
 
 A complete cloud-native deployment project that automatically provisions AWS infrastructure, configures a Kubernetes cluster, and deploys a containerized application using Infrastructure as Code (Terraform), Configuration Management (Ansible), and CI/CD (GitHub Actions).
 
