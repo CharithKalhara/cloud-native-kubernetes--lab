@@ -654,4 +654,4 @@ https://www.linkedin.com/in/charithkalhara/
 
 # License
 
-MIT License.
+MIT License
