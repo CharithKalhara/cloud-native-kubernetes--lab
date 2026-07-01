@@ -1,8 +1,5 @@
 ---
-- name: Install Traefik CRDs
+- name: Install NGINX Ingress
   shell: |
-    kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v3.5/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml
-
-- name: Wait for Traefik
-  shell: kubectl rollout status deployment/svclb-traefik -n kube-system
-  ignore_errors: yes
+    kubectl apply -f \
+    https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
