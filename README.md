@@ -640,18 +640,9 @@ This project demonstrates practical experience with:
 - Multi-node Kubernetes cluster
 - Helm charts
 - Argo CD GitOps
-- Cluster Autoscaler
 - AWS Load Balancer Controller
-- Amazon ECR
-- Prometheus Operator
-- Grafana dashboards
-- Loki log aggregation
-- Velero backups
 - External Secrets Operator
 - HashiCorp Vault integration
-- Blue-Green deployments
-- Canary deployments
-- Service Mesh (Istio)
 - Kubernetes Dashboard
 
 ---
