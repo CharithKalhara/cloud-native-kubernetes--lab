@@ -245,6 +245,8 @@ This project deploys the following Kubernetes resources:
 - Persistent Volume Claim
 - Horizontal Pod Autoscaler (optional)
 
+![Project Structure](docs/images/kubernets-structure.png)
+
 ---
 
 # CI/CD Pipeline
@@ -282,6 +284,8 @@ Features include:
 - Resource limits
 
 ---
+
+![Infrastructure Overview](docs/images/all.png)
 
 # Kubernetes Components
 
@@ -430,6 +434,26 @@ Possible dashboards include:
 - Node health
 - Network traffic
 - Cluster status
+
+---
+
+![Local Storage](docs/images/local-rules.png)
+
+---
+
+![Cluster Resources](docs/images/resources.png)
+
+---
+
+![CPU Dashboard](docs/images/cpu.png)
+
+---
+
+![CPU Stress Test](docs/images/cpu1.png)
+
+---
+
+![Application](docs/images/hello-kubernetes.png)
 
 ---
 
@@ -612,6 +636,8 @@ This project demonstrates practical experience with:
 - Cloud-native Application Deployment
 
 ---
+
+![Kubernetes Deployment](docs/images/kubernets.png)
 
 # Future Improvements
 
